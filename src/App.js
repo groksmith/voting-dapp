@@ -1,94 +1,126 @@
-import React, { Component } from 'react'
-import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
-import getWeb3 from './utils/getWeb3'
+import React, { Component } from 'react';
+import AuctionContract from '../build/contracts/Auction.json';
+import getWeb3 from './utils/getWeb3';
+import Button from 'react-button';
 
-import './css/oswald.css'
-import './css/open-sans.css'
-import './css/pure-min.css'
-import './App.css'
+const styles = {
+	accountsDiv: {
+		display: 'flex',
+		flexDirection: 'column',
+		width: '50%'
+	},
+	biddingButtons: {
+		display: 'flex',
+		flexDirection: 'column',
+		width: '50%'
+	}
+};
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      storageValue: 0,
-      web3: null
-    }
-  }
+	state = {
+		accounts: null,
+		auction: null,
+		selectedAccount: null,
+		bidValue: 0
+	}
+	web3;
 
   componentWillMount() {
-    // Get network provider and web3 instance.
-    // See utils/getWeb3 for more info.
-
     getWeb3
-    .then(results => {
-      this.setState({
-        web3: results.web3
-      })
-
-      // Instantiate contract once web3 provided.
-      this.instantiateContract()
-    })
-    .catch(() => {
-      console.log('Error finding web3.')
-    })
+			.then(results => {
+				this.web3 = results.web3;
+				this.instantiateContract()
+			})
+			.catch(() => {
+				console.log('Error finding web3.')
+			});
   }
 
-  instantiateContract() {
-    /*
-     * SMART CONTRACT EXAMPLE
-     *
-     * Normally these functions would be called in the context of a
-     * state management library, but for convenience I've placed them here.
-     */
+  instantiateContract = () => {
+    const contract = require('truffle-contract');
+    const auction = contract(AuctionContract);
+    auction.setProvider(this.web3.currentProvider);
+    this.web3.eth.getAccounts((error, accounts) => {
+			this.setState({ accounts, selectedAccount: accounts[0] });
+			auction.deployed()
+				.then(auction => {
+					this.setState({ auction });
+				})
+				.catch(e => console.log(e));
+		});
+	}
 
-    const contract = require('truffle-contract')
-    const simpleStorage = contract(SimpleStorageContract)
-    simpleStorage.setProvider(this.state.web3.currentProvider)
+	bid = () => {
+		this.state.auction.addBid.call(this.state.bidValue, {from: this.state.selectedAccount})
+			.then(result => console.log(result));
+	}
 
-    // Declaring this for later so we can chain functions on SimpleStorage.
-    var simpleStorageInstance
+	closeAuction = async () => {
+		if(this.state.selectedAccount !== this.state.accounts[0]) {
+			console.log('You can\'t close the auction with this account');
+		} else {
+			await this.getHighestBidder();
+			this.state.auction.closeAuction.call({from: this.state.selectedAccount});
+		}
+	}
 
-    // Get accounts.
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      simpleStorage.deployed().then((instance) => {
-        simpleStorageInstance = instance
-
-        // Stores a given value, 5 by default.
-        return simpleStorageInstance.set(5, {from: accounts[0]})
-      }).then((result) => {
-        // Get the value from the contract to prove it worked.
-        return simpleStorageInstance.get.call(accounts[0])
-      }).then((result) => {
-        // Update state with the result.
-        return this.setState({ storageValue: result.c[0] })
-      })
-    })
-  }
+	getHighestBidder = () => {
+		return this.state.auction.getHighestBidder.call({from: this.state.selectedAccount})
+			.then(result => console.log(result));
+	}
 
   render() {
+		const accountsToBidWith = this.state.accounts ? 
+			this.state.accounts.map(account => {
+				const pressed = account === this.state.selectedAccount;
+				return (
+					<Button
+						pressed={pressed}
+						key={account}
+						onClick={() => this.setState({ selectedAccount: account })}
+					>
+						{account}
+					</Button>
+				);
+			}) : null;
+		const bettingButtons = () => {
+			return (
+				<div style={styles.biddingButtons}>
+					<input
+						style={{ width: '50%', margin: 'auto' }}
+						value={this.state.bidValue}
+						onChange={e => this.setState({ bidValue: e.target.value })}
+					/>
+					<Button
+						onClick={this.bid}
+					>
+						Bid {this.state.bidValue} with account {this.state.selectedAccount}
+					</Button>
+					<Button
+						onClick={this.getHighestBidder}
+					>
+						Get highest bidder
+					</Button>
+					<Button
+						onClick={this.closeAuction}
+					>
+						Close Auction
+					</Button>
+				</div>
+			);
+		}
     return (
-      <div className="App">
-        <nav className="navbar pure-menu pure-menu-horizontal">
-            <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
-        </nav>
-
-        <main className="container">
-          <div className="pure-g">
-            <div className="pure-u-1-1">
-              <h1>Good to Go!</h1>
-              <p>Your Truffle Box is installed and ready.</p>
-              <h2>Smart Contract Example</h2>
-              <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
-              <p>Try changing the value stored on <strong>line 59</strong> of App.js.</p>
-              <p>The stored value is: {this.state.storageValue}</p>
-            </div>
-          </div>
-        </main>
+      <div style={{ display: 'flex' }}>
+				<div
+					style={styles.accountsDiv}
+				>
+					{accountsToBidWith}
+				</div>
+				{bettingButtons()}
       </div>
     );
   }
 }
+
 
 export default App

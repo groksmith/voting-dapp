@@ -1,0 +1,135 @@
+{
+  "contract_name": "Auction",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getHighestBidder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "creator",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getCreator",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "newBid",
+          "type": "uint256"
+        }
+      ],
+      "name": "addBid",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "closeAuction",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "highestBidder",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "highestBid",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "payable": false,
+      "type": "constructor"
+    }
+  ],
+  "unlinked_binary": "0x60606040526000600255341561001457600080fd5b5b60008054600160a060020a033316600160a060020a031991821681179092556001805490911690911790555b5b6102ae806100516000396000f3006060604052361561007f5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416623495a4811461008457806302d05d3f146100b35780630ee2cb10146100e257806314b0e26614610111578063378252f21461014357806391f9015714610172578063d57bde79146101a1575b600080fd5b341561008f57600080fd5b6100976101c6565b604051600160a060020a03909116815260200160405180910390f35b34156100be57600080fd5b6100976101d6565b604051600160a060020a03909116815260200160405180910390f35b34156100ed57600080fd5b6100976101e5565b604051600160a060020a03909116815260200160405180910390f35b341561011c57600080fd5b6100976004356101f5565b604051600160a060020a03909116815260200160405180910390f35b341561014e57600080fd5b61009761023f565b604051600160a060020a03909116815260200160405180910390f35b341561017d57600080fd5b61009761026d565b604051600160a060020a03909116815260200160405180910390f35b34156101ac57600080fd5b6101b461027c565b60405190815260200160405180910390f35b600154600160a060020a03165b90565b600054600160a060020a031681565b600054600160a060020a03165b90565b600060025482111561022f576001805473ffffffffffffffffffffffffffffffffffffffff191633600160a060020a031617905560028290555b6102376101c6565b90505b919050565b6000805433600160a060020a039081169116141561007f57600054600160a060020a0316ff5b600080fd5b90565b600154600160a060020a031681565b600254815600a165627a7a723058201186d24c694d630ee323cd7cdc339e3290881c02cac62eba53254336862da1440029",
+  "networks": {
+    "1037": {
+      "events": {
+        "0x1d78ca6377547e2f5434a04066a4dcac7670fd77e146b686b06bf8fbc06fb435": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "bidder",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "bid",
+              "type": "uint256"
+            }
+          ],
+          "name": "AuctionClosed",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x18213e1cfc84cb3a48e90ed09c3839af69dfe72c",
+      "updated_at": 1504874013915
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1504874013915
+}
